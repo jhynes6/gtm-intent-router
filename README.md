@@ -1,7 +1,7 @@
 # GTM Intent Router (Enrich → Score → Route)
 
 A small GTM engineering demo: ingest leads, enrich firmographics, score intent, route ownership, and notify Slack.
-Demo for lifecycle automation, routing, and signal-based selling
+Designed to mimic real RevOps workflows (lifecycle automation, routing, and signal-based selling).
 
 ## What it does
 
@@ -32,6 +32,12 @@ cp .env.example .env
 
 ```bash
 python -m src.main --csv sample_data/leads.csv
+```
+
+4. (Optional) Save enriched output to a CSV:
+
+```bash
+python -m src.main --csv sample_data/leads.csv -o output/enriched_leads.csv
 ```
 
 ## Notes
