@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -15,7 +16,7 @@ from .sinks import post_to_slack
 from .sinks import slack_payload
 
 
-def run(csv_path: str | None = None) -> None:
+def run(csv_path: str | None = None, output_path: str | None = None) -> None:
     load_dotenv()
     cfg = load_config()
 
@@ -63,11 +64,18 @@ def run(csv_path: str | None = None) -> None:
             "ai_first_line",
         ]
     ]
-    print(out_df.sort_values(["priority", "score"], ascending=[True, False]).to_string(index=False))
+    sorted_df = out_df.sort_values(["priority", "score"], ascending=[True, False])
+    print(sorted_df.to_string(index=False))
+
+    if output_path:
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        sorted_df.to_csv(output_path, index=False)
+        print(f"\nSaved enriched output to {output_path}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--csv", required=True)
+    parser.add_argument("--csv", required=True, help="Input CSV path")
+    parser.add_argument("-o", "--output", help="Output CSV path for enriched results")
     args = parser.parse_args()
-    run(args.csv)
+    run(args.csv, args.output)
