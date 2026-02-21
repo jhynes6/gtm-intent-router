@@ -1,7 +1,7 @@
 # GTM Intent Router (Enrich → Score → Route)
 
 A small GTM engineering demo: ingest leads, enrich firmographics, score intent, route ownership, and notify Slack.
-Designed to mimic real RevOps workflows (lifecycle automation, routing, and signal-based selling).
+Demo for lifecycle automation, routing, and signal-based selling
 
 ## What it does
 
