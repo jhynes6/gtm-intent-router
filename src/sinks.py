@@ -18,6 +18,6 @@ def slack_payload(lead: dict) -> dict:
         "text": (
             f"🔥 New {lead['priority']} lead: {lead.get('name', '')} @ {lead.get('company', '')} "
             f"(score={lead['score']}) -> owner: {lead['owner']}\n"
-            f"Reasons: {", ".join(lead.get('score_reasons', []))}"
+            f"Reasons: {', '.join(lead.get('score_reasons', []))}"
         )
     }
