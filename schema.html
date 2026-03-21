@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>account_research_data schema</title>
+<style>
+@font-face {
+  font-family: 'Anthropic Sans';
+  src: url('https://claude.ai/fonts/AnthropicSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Anthropic Sans';
+  src: url('https://claude.ai/fonts/AnthropicSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Anthropic Mono';
+  src: url('https://claude.ai/fonts/AnthropicMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --font-sans: 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Anthropic Mono', 'SF Mono', 'Fira Code', monospace;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F7F5EE;
+  --bg-tertiary: #EEECE2;
+  --text-primary: #1A1915;
+  --text-secondary: #5F5E5A;
+  --text-tertiary: #888780;
+  --border-tertiary: rgba(0,0,0,0.12);
+  --border-secondary: rgba(0,0,0,0.2);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1A1915;
+    --bg-secondary: #252520;
+    --bg-tertiary: #2C2C26;
+    --text-primary: #E8E6DF;
+    --text-secondary: #9C9A92;
+    --text-tertiary: #73726C;
+    --border-tertiary: rgba(255,255,255,0.10);
+    --border-secondary: rgba(255,255,255,0.18);
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 32px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.root {
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.root-header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-tertiary);
+}
+.root-name { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+.root-type { font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); }
+
+.section { border-bottom: 1px solid var(--border-tertiary); }
+.section:last-child { border-bottom: none; }
+
+.sec-header {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.sec-header:hover { background: var(--bg-secondary); }
+
+.sec-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.sec-name { font-size: 13px; font-weight: 500; color: var(--text-primary); flex: 1; }
+.sec-desc { font-size: 11px; color: var(--text-tertiary); }
+.sec-chevron {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  transition: transform 0.2s;
+}
+.sec-chevron.open { transform: rotate(90deg); }
+
+.fields { display: none; padding: 0 16px 12px 34px; }
+.fields.open { display: block; }
+
+.field {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 0.5px solid var(--border-tertiary);
+}
+.field:last-child { border-bottom: none; }
+
+.fname {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 170px;
+  font-family: var(--font-mono);
+}
+.ftype {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  min-width: 100px;
+  font-family: var(--font-mono);
+}
+.fdesc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex: 1;
+  line-height: 1.4;
+}
+.fdesc code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-tertiary);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.scored {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 1px 5px;
+  border-radius: 8px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.d-teal   { background: #E1F5EE; color: #085041; }
+.d-blue   { background: #E6F1FB; color: #0C447C; }
+.d-purple { background: #EEEDFE; color: #3C3489; }
+.d-coral  { background: #FAECE7; color: #712B13; }
+.d-amber  { background: #FAEEDA; color: #633806; }
+.d-green  { background: #EAF3DE; color: #27500A; }
+.d-pink   { background: #FBEAF0; color: #72243E; }
+
+@media (prefers-color-scheme: dark) {
+  .d-teal   { background: #04342C; color: #9FE1CB; }
+  .d-blue   { background: #042C53; color: #B5D4F4; }
+  .d-purple { background: #26215C; color: #CECBF6; }
+  .d-coral  { background: #4A1B0C; color: #F5C4B3; }
+  .d-amber  { background: #412402; color: #FAC775; }
+  .d-green  { background: #173404; color: #C0DD97; }
+  .d-pink   { background: #4B1528; color: #F4C0D1; }
+}
+
+.nested {
+  margin: 6px 0 2px 12px;
+  border-left: 2px solid var(--border-tertiary);
+  padding-left: 10px;
+}
+.nested .field { padding: 3px 0; }
+
+.legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border-tertiary);
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+.legend code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--bg-secondary);
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+</style>
+</head>
+<body>
+
+<div class="root">
+<div class="root-header">
+  <span class="root-name">account_research_data</span>
+  <span class="root-type">object</span>
+</div>
+
+<!-- Meta fields -->
+<div class="section" onclick="toggle(this)">
+  <div class="sec-header"><div class="sec-dot" style="background:#888780"></div><span class="sec-name">Meta fields</span><span class="sec-desc">Dates, filter gate, final score</span><span class="sec-chevron open">&#9654;</span></div>
+  <div class="fields open">
+    <div class="field"><span class="fname">date_updated</span><span class="ftype">str</span><span class="fdesc">"yyyy-mm-dd" — when this record was last refreshed</span></div>
+    <div class="field"><span class="fname">date_last_contact</span><span class="ftype">str</span><span class="fdesc">"yyyy-mm-dd" — filter out if contacted too recently</span></div>
+    <div class="field"><span class="fname">priority_score</span><span class="ftype">int (0–100)</span><span class="fdesc">Sum of all score fields across ICP fit + signals fit + seasonal hiring</span></div>
+  </div>
+</div>
+
+<!-- ICP_fit -->
+<div class="section" onclick="toggle(this)">
+  <div class="sec-header"><div class="sec-dot" style="background:#378ADD"></div><span class="sec-name">ICP_fit</span><span class="sec-desc">Ideal customer profile matching</span><span class="sec-chevron open">&#9654;</span></div>
+  <div class="fields open">
+    <div class="field"><span class="fname">account_industry</span><span class="ftype">{data, score}</span><span class="fdesc"><code>data</code>: str — industry from ZoomInfo <span class="scored d-blue">scored</span></span></div>
+    <div class="field"><span class="fname">num_locations</span><span class="ftype">{data, score}</span><span class="fdesc"><code>data</code>: int — current physical location count (ZoomInfo) <span class="scored d-blue">scored</span></span></div>
+    <div class="field"><span class="fname">prev_week_num_locations</span><span class="ftype">{data, score}</span><span class="fdesc"><code>data</code>: int — last week's count from SF knowledge base; delta = growth signal <span class="scored d-blue">scored</span></span></div>
+  </div>
+</div>
+
+<!-- signals_fit -->
+<div class="section" onclick="toggle(this)">
+  <div class="sec-header"><div class="sec-dot" style="background:#D85A30"></div><span class="sec-name">signals_fit</span><span class="sec-desc">Intent + timing signals (7 sources)</span><span class="sec-chevron open">&#9654;</span></div>
+  <div class="fields open">
+    <div class="field"><span class="fname">hubspot_activity</span><span class="ftype">{data, score}</span><span class="fdesc"><code>data</code>: str — inbound activity history summary <span class="scored d-coral">scored</span></span></div>
+
+    <div class="field" style="flex-direction:column;gap:2px">
+      <span class="fname">glass_door</span><span class="ftype" style="min-width:auto">{data: {...}, score}</span>
+      <div class="nested">
+        <div class="field"><span class="fname">overall_rating</span><span class="ftype">int</span><span class="fdesc">Glassdoor overall rating</span></div>
+        <div class="field"><span class="fname">payroll_complaints</span><span class="ftype">int</span><span class="fdesc">Count of reviews with payroll issues (LLM-identified)</span></div>
+      </div>
+      <span class="fdesc"><span class="scored d-coral">scored</span></span>
+    </div>
+
+    <div class="field" style="flex-direction:column;gap:2px">
+      <span class="fname">hiring_cafe_job_posts</span><span class="ftype" style="min-width:auto">{data: {...}, score}</span>
+      <div class="nested">
+        <div class="field"><span class="fname">total</span><span class="ftype">int</span><span class="fdesc">Total hourly job posts found</span></div>
+        <div class="field"><span class="fname">avg_age</span><span class="ftype">float</span><span class="fdesc">Average age of posts (days)</span></div>
+        <div class="field"><span class="fname">max_age</span><span class="ftype">float</span><span class="fdesc">Oldest post age (days)</span></div>
+        <div class="field"><span class="fname">keyword_focus</span><span class="ftype">str</span><span class="fdesc">"flex pay" or "benefits focus" — LLM-scored relevance</span></div>
+        <div class="field"><span class="fname">common_job_title</span><span class="ftype">str</span><span class="fdesc">Most frequent title across posts</span></div>
+      </div>
+      <span class="fdesc"><span class="scored d-coral">scored</span></span>
+    </div>
+
+    <div class="field"><span class="fname">clay_leadership_changes</span><span class="ftype">{data, score}</span><span class="fdesc"><code>data</code>: str — from Clay signal via SF custom field <span class="scored d-coral">scored</span></span></div>
+    <div class="field"><span class="fname">clay_news</span><span class="ftype">{data, score}</span><span class="fdesc"><code>data</code>: str — from Clay signal via SF custom field <span class="scored d-coral">scored</span></span></div>
+    <div class="field"><span class="fname">clay_blog</span><span class="ftype">{data, score}</span><span class="fdesc"><code>data</code>: str — from Clay signal via SF custom field <span class="scored d-coral">scored</span></span></div>
+    <div class="field"><span class="fname">search_intent_relevant_topics</span><span class="ftype">{data, score}</span><span class="fdesc"><code>data</code>: array — ZoomInfo topics, LLM-filtered for relevance <span class="scored d-coral">scored</span></span></div>
+  </div>
+</div>
+
+<!-- seasonal_hiring -->
+<div class="section" onclick="toggle(this)">
+  <div class="sec-header"><div class="sec-dot" style="background:#EF9F27"></div><span class="sec-name">seasonal_hiring</span><span class="sec-desc">Industry date-range match</span><span class="sec-chevron open">&#9654;</span></div>
+  <div class="fields open">
+    <div class="field"><span class="fname">data</span><span class="ftype">bool</span><span class="fdesc">T/F — is current date within this industry's predefined hiring season?</span></div>
+    <div class="field"><span class="fname">score</span><span class="ftype">int</span><span class="fdesc"><span class="scored d-amber">scored</span> Contributes to priority_score</span></div>
+  </div>
+</div>
+
+<!-- personalization -->
+<div class="section" onclick="toggle(this)">
+  <div class="sec-header"><div class="sec-dot" style="background:#D4537E"></div><span class="sec-name">personalization</span><span class="sec-desc">Lead-level context (Brightdata / LinkedIn)</span><span class="sec-chevron open">&#9654;</span></div>
+  <div class="fields open">
+    <div class="field"><span class="fname">person_city</span><span class="ftype">str</span><span class="fdesc">City from LinkedIn profile</span></div>
+    <div class="field" style="flex-direction:column;gap:2px">
+      <span class="fname">person_role_details</span><span class="ftype" style="min-width:auto">{...}</span>
+      <div class="nested">
+        <div class="field"><span class="fname">job_title</span><span class="ftype">str</span><span class="fdesc">Current title</span></div>
+        <div class="field"><span class="fname">time_in_role</span><span class="ftype">str</span><span class="fdesc">Duration in current position</span></div>
+      </div>
+    </div>
+    <div class="field"><span class="fname">person_work_history</span><span class="ftype">array</span><span class="fdesc">[current_job, job_1, job_2, … job_n]</span></div>
+    <div class="field"><span class="fname">person_recent_posts</span><span class="ftype">array</span><span class="fdesc">Recent LinkedIn activity</span></div>
+  </div>
+</div>
+
+<div class="legend">
+  <span><span class="scored d-blue">scored</span> = LLM assigns int score → feeds priority_score</span>
+  <span>Nested <code>{data, score}</code> = data value + score contribution pair</span>
+</div>
+</div>
+
+<script>
+function toggle(sec) {
+  const f = sec.querySelector('.fields');
+  const c = sec.querySelector('.sec-chevron');
+  if (f && c) { f.classList.toggle('open'); c.classList.toggle('open'); }
+}
+</script>
+</body>
+</html>

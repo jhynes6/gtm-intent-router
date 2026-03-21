@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospect call brief — automation workflow</title>
+<style>
+@font-face {
+  font-family: 'Anthropic Sans';
+  src: url('https://claude.ai/fonts/AnthropicSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Anthropic Sans';
+  src: url('https://claude.ai/fonts/AnthropicSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+:root {
+  --font-sans: 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F7F5EE;
+  --bg-tertiary: #EEECE2;
+  --text-primary: #1A1915;
+  --text-secondary: #5F5E5A;
+  --text-tertiary: #888780;
+  --border-tertiary: rgba(0,0,0,0.12);
+  --border-secondary: rgba(0,0,0,0.2);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --sf-bg: #E6F1FB; --sf-text: #0C447C; --sf-border: #85B7EB;
+  --clay-bg: #EEEDFE; --clay-text: #3C3489; --clay-border: #AFA9EC;
+  --data-bg: #E1F5EE; --data-text: #085041; --data-border: #5DCAA5;
+  --pill-bg: #9FE1CB; --pill-text: #04342C;
+  --llm-bg: #FAEEDA; --llm-text: #633806; --llm-border: #FAC775;
+  --score-bg: #FAECE7; --score-text: #712B13; --score-border: #F0997B;
+  --brief-bg: #EAF3DE; --brief-text: #27500A; --brief-border: #97C459;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1A1915;
+    --bg-secondary: #252520;
+    --bg-tertiary: #2C2C26;
+    --text-primary: #E8E6DF;
+    --text-secondary: #9C9A92;
+    --text-tertiary: #73726C;
+    --border-tertiary: rgba(255,255,255,0.10);
+    --border-secondary: rgba(255,255,255,0.18);
+
+    --sf-bg: #042C53; --sf-text: #B5D4F4; --sf-border: #185FA5;
+    --clay-bg: #26215C; --clay-text: #CECBF6; --clay-border: #534AB7;
+    --data-bg: #04342C; --data-text: #9FE1CB; --data-border: #0F6E56;
+    --pill-bg: #085041; --pill-text: #9FE1CB;
+    --llm-bg: #412402; --llm-text: #FAC775; --llm-border: #854F0B;
+    --score-bg: #4A1B0C; --score-text: #F5C4B3; --score-border: #993C1D;
+    --brief-bg: #173404; --brief-text: #C0DD97; --brief-border: #3B6D11;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 32px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.phase { margin-bottom: 6px; position: relative; }
+.phase-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+  padding-left: 4px;
+}
+
+.card {
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  background: var(--bg-secondary);
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.box {
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  text-align: center;
+  min-width: 0;
+  flex: 1;
+}
+.box-title { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.box-sub { font-size: 11px; line-height: 1.4; margin-top: 3px; opacity: 0.75; }
+
+.sf   { background: var(--sf-bg);   color: var(--sf-text);   border: 0.5px solid var(--sf-border); }
+.clay { background: var(--clay-bg); color: var(--clay-text); border: 0.5px solid var(--clay-border); }
+.llm  { background: var(--llm-bg);  color: var(--llm-text);  border: 0.5px solid var(--llm-border); }
+.score{ background: var(--score-bg); color: var(--score-text); border: 0.5px solid var(--score-border); }
+.push { background: var(--sf-bg);   color: var(--sf-text);   border: 0.5px solid var(--sf-border); }
+.brief{ background: var(--brief-bg); color: var(--brief-text); border: 0.5px solid var(--brief-border); }
+
+.api {
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+}
+.api-name { font-size: 11px; font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+.api-desc { font-size: 10px; color: var(--text-secondary); line-height: 1.3; margin-top: 2px; }
+
+.data-box {
+  background: var(--data-bg);
+  color: var(--data-text);
+  border: 0.5px solid var(--data-border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-top: 10px;
+}
+.data-title { font-size: 13px; font-weight: 500; }
+.data-fields { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.field-pill {
+  font-size: 10px;
+  background: var(--pill-bg);
+  color: var(--pill-text);
+  padding: 3px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.arrow-down { display: flex; justify-content: center; padding: 4px 0; }
+.arrow-down svg { width: 20px; height: 20px; }
+
+.sync-arrow { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 48px; }
+.sync-arrow svg { width: 40px; height: 24px; }
+
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+.note {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  padding-left: 2px;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+
+<div class="phase">
+  <div class="phase-label">Part 1 — Setup</div>
+  <div class="card">
+    <div class="row">
+      <div class="box sf">
+        <div class="box-title">Salesforce</div>
+        <div class="box-sub">Custom fields on Account:<br>clay_leadership_change,<br>clay_news, clay_blog</div>
+      </div>
+      <div class="sync-arrow"><svg viewBox="0 0 48 24"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L7 4L1 7" fill="none" stroke="context-stroke" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><path d="M8 8h28" stroke="var(--text-secondary)" stroke-width="1.2" fill="none" marker-end="url(#ah)"/><path d="M40 16H12" stroke="var(--text-secondary)" stroke-width="1.2" fill="none" marker-end="url(#ah)"/></svg></div>
+      <div class="box clay">
+        <div class="box-title">Clay</div>
+        <div class="box-sub">TAM accounts synced<br>Signals auto-run<br>weekly (Sundays)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow-down"><svg viewBox="0 0 20 20"><path d="M10 2v14M5 12l5 5 5-5" stroke="var(--text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<div class="phase">
+  <div class="phase-label">Part 2 — API calls → build account_research_data</div>
+  <div class="card">
+    <div class="grid4" style="margin-bottom:8px">
+      <div class="api"><div class="api-name">ZoomInfo</div><div class="api-desc">Industry, locations, search intent</div></div>
+      <div class="api"><div class="api-name">HubSpot</div><div class="api-desc">Inbound activity history</div></div>
+      <div class="api"><div class="api-name">Apify → HiringCafe</div><div class="api-desc">Job posts, LLM relevance score</div></div>
+      <div class="api"><div class="api-name">Apify → Glassdoor</div><div class="api-desc">Reviews, payroll issues</div></div>
+    </div>
+    <div class="grid3">
+      <div class="api"><div class="api-name">Salesforce</div><div class="api-desc">Clay data, prev knowledge base, last contact date</div></div>
+      <div class="api"><div class="api-name">Brightdata</div><div class="api-desc">LinkedIn profile info</div></div>
+      <div class="api"><div class="api-name">Seasonal hiring</div><div class="api-desc">Date vs. industry ranges → T/F</div></div>
+    </div>
+    <div class="note">LLM filters ZoomInfo intent topics, scores HiringCafe descriptions, identifies Glassdoor payroll complaints</div>
+    <div class="arrow-down"><svg viewBox="0 0 20 20"><path d="M10 2v14M5 12l5 5 5-5" stroke="var(--text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="data-box">
+      <div class="data-title">account_research_data</div>
+      <div class="data-fields">
+        <span class="field-pill">ICP fit</span>
+        <span class="field-pill">signals fit</span>
+        <span class="field-pill">seasonal hiring</span>
+        <span class="field-pill">personalization</span>
+        <span class="field-pill">date_last_contact</span>
+        <span class="field-pill">priority_score</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow-down"><svg viewBox="0 0 20 20"><path d="M10 2v14M5 12l5 5 5-5" stroke="var(--text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<div class="phase">
+  <div class="phase-label">Parts 3 & 4 — LLM scoring</div>
+  <div class="card">
+    <div class="row">
+      <div class="box llm">
+        <div class="box-title">LLM scores each field</div>
+        <div class="box-sub">Calculates score contribution<br>for every data field</div>
+      </div>
+      <div class="sync-arrow"><svg viewBox="0 0 48 24"><path d="M6 12h32" stroke="var(--text-secondary)" stroke-width="1.2" fill="none" marker-end="url(#ah)"/></svg></div>
+      <div class="box score">
+        <div class="box-title">Sum → priority_score</div>
+        <div class="box-sub">0–100 composite score<br>updated weekly</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow-down"><svg viewBox="0 0 20 20"><path d="M10 2v14M5 12l5 5 5-5" stroke="var(--text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<div class="phase">
+  <div class="phase-label">Part 5 — Persist results</div>
+  <div class="card">
+    <div class="row">
+      <div class="box push" style="flex:1">
+        <div class="box-title">Push priority_score → Salesforce</div>
+        <div class="box-sub">Account-level field update</div>
+      </div>
+      <div class="box push" style="flex:1">
+        <div class="box-title">Push full data structure → DB</div>
+        <div class="box-sub">Or SF custom field</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow-down"><svg viewBox="0 0 20 20"><path d="M10 2v14M5 12l5 5 5-5" stroke="var(--text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<div class="phase">
+  <div class="phase-label">Part 6 — Output</div>
+  <div class="card">
+    <div class="row">
+      <div class="box brief" style="flex:1">
+        <div class="box-title">Generate BDR call brief</div>
+        <div class="box-sub">LLM renders account_research_data<br>through brief_template.md prompting</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
