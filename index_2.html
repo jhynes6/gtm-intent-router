@@ -251,10 +251,12 @@ body {
     <div class="row">
       <div class="box push" style="flex:1">
         <div class="box-title">Push priority_score → Salesforce</div>
+        <div class="box-title">Push intent_signals → Salesforce</div>
+
         <div class="box-sub">Account-level field update</div>
       </div>
       <div class="box push" style="flex:1">
-        <div class="box-title">Push full data structure → DB with historical snapshots</div>
+        <div class="box-title">Push full data structure → external DB with historical snapshots</div>
       </div>
     </div>
   </div>
@@ -267,7 +269,8 @@ body {
   <div class="card">
     <div class="row">
       <div class="box brief" style="flex:1">
-        <div class="box-title">Generate BDR call brief</div>
+        <div class="box-title">Generate BDR call brief → Salesforce</div>
+        <div class="box-title">Store historical call briefs → external DB</div>
         <div class="box-sub">LLM renders account_research_data<br>through brief_template.md prompting</div>
       </div>
     </div>
