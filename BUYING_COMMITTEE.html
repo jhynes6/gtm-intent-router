@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinServe Group — Buying Committee Map</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121933;
+      --panel-2: #182245;
+      --text: #e8ecf8;
+      --muted: #aeb8d6;
+      --border: #2a3566;
+      --accent: #7aa2ff;
+      --accent-2: #5eead4;
+      --p1: #ef4444;
+      --p2: #f59e0b;
+      --p3: #10b981;
+      --shadow: 0 12px 40px rgba(0,0,0,.28);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #0a1022 0%, #0d1530 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 40px 24px 64px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(122,162,255,.16), rgba(94,234,212,.10));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent-2);
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.05;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 900px;
+      line-height: 1.6;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .panel {
+      background: rgba(18, 25, 51, .94);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .panel-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1320px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #141c39;
+      color: #dfe6ff;
+      text-align: left;
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: bottom;
+    }
+
+    tbody td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(42,53,102,.7);
+      color: var(--text);
+      vertical-align: top;
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,.02);
+    }
+
+    .contact {
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .title {
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .p1 { background: rgba(239,68,68,.12); color: #fda4a4; border-color: rgba(239,68,68,.3); }
+    .p2 { background: rgba(245,158,11,.12); color: #fcd34d; border-color: rgba(245,158,11,.3); }
+    .p3 { background: rgba(16,185,129,.12); color: #86efac; border-color: rgba(16,185,129,.3); }
+
+    .status {
+      font-weight: 600;
+      color: #d9e1fb;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 16px;
+      padding: 0 4px;
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 20px 14px 40px; }
+      .hero { padding: 22px 18px; border-radius: 18px; }
+      .panel { border-radius: 18px; }
+      .panel-head { padding: 16px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Dagster Expansion Planning</div>
+      <h1>FinServe Group — Buying Committee Map</h1>
+      <p class="sub">
+        Stakeholder map for account expansion planning across Risk onboarding, lineage/compliance upsell, and future real-time pipeline opportunity.
+      </p>
+      <div class="meta">
+        <span class="chip">Champion identified</span>
+        <span class="chip">Economic buyer identified</span>
+        <span class="chip">Risk + Compliance contacts still to confirm</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Stakeholder Detail</h2>
+          <p>Use this as the account-level committee source of truth. Deal-specific stakeholders can be associated to individual expansion deals in HubSpot.</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Contact</th>
+              <th>Role in Deal</th>
+              <th>Department</th>
+              <th>Priority</th>
+              <th>Likely Pain / Interest</th>
+              <th>Message Angle</th>
+              <th>Current Status</th>
+              <th>Next Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="contact">Maria Santos</div>
+                <div class="title">Lead Data Engineer</div>
+              </td>
+              <td>Champion / Technical Owner</td>
+              <td>Data Engineering</td>
+              <td><span class="pill p1">P1</span></td>
+              <td>Scaling usage, onboarding new teams, maintaining platform standardization</td>
+              <td>Expand Dagster on an already successful deployment without adding tool sprawl</td>
+              <td class="status">Known / engaged</td>
+              <td>Validate stakeholder map and co-plan expansion path</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="contact">VP of Technology</div>
+                <div class="title">VP of Technology</div>
+              </td>
+              <td>Economic Buyer</td>
+              <td>Technology</td>
+              <td><span class="pill p1">P1</span></td>
+              <td>Budget allocation, platform standardization, risk reduction, governance</td>
+              <td>Low-friction expansion on a security-approved platform during active budget planning</td>
+              <td class="status">Known / not fully engaged</td>
+              <td>Send exec summary and secure meeting</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="contact">Risk Team Lead</div>
+                <div class="title">TBD</div>
+              </td>
+              <td>Business Stakeholder</td>
+              <td>Risk Management</td>
+              <td><span class="pill p1">P1</span></td>
+              <td>Onboarding team onto trusted orchestration platform, visibility into workflows</td>
+              <td>Give Risk a fast path onto existing approved infrastructure</td>
+              <td class="status">Identified role, contact not confirmed</td>
+              <td>Identify contact and schedule discovery</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="contact">Compliance Officer</div>
+                <div class="title">TBD</div>
+              </td>
+              <td>Compliance Stakeholder / Influencer</td>
+              <td>Compliance</td>
+              <td><span class="pill p1">P1</span></td>
+              <td>Better lineage, traceability, compliance reporting</td>
+              <td>Position lineage and compliance reporting as direct response to stated need</td>
+              <td class="status">Mentioned in meeting / not fully mapped</td>
+              <td>Confirm name and book requirements conversation</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="contact">Procurement / Vendor Manager</div>
+                <div class="title">TBD</div>
+              </td>
+              <td>Procurement / Approver</td>
+              <td>Procurement</td>
+              <td><span class="pill p2">P2</span></td>
+              <td>Amendment path, pricing, vendor process, paperwork timing</td>
+              <td>Keep expansion lightweight by building on existing relationship and approvals</td>
+              <td class="status">Not yet engaged</td>
+              <td>Identify only once buyer interest is confirmed</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="contact">Security / GRC Stakeholder</div>
+                <div class="title">TBD</div>
+              </td>
+              <td>Approver / Risk Reducer</td>
+              <td>Security / GRC</td>
+              <td><span class="pill p3">P3</span></td>
+              <td>Security review, controls, platform risk</td>
+              <td>Dagster+ already passed internal security audit</td>
+              <td class="status">Implicitly supportive</td>
+              <td>Reference passed audit if approval questions arise</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="contact">Trading / Trading Tech Lead</div>
+                <div class="title">TBD</div>
+              </td>
+              <td>Future Use-Case Stakeholder</td>
+              <td>Trading</td>
+              <td><span class="pill p3">P3</span></td>
+              <td>Real-time pipelines, future platform capability</td>
+              <td>Keep warm as phase-two opportunity; do not anchor current-quarter expansion on this thread</td>
+              <td class="status">Exploratory</td>
+              <td>Add to nurture track, not core close plan</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>Recommended use: link from the HubSpot company record and associate relevant contacts to each expansion deal.</div>
+      <div>Prepared for: FinServe Group expansion planning</div>
+    </div>
+  </div>
+</body>
+</html>
