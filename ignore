@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From Athens to Blue Ridge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lato:wght@300;400&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f5efe6;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      font-family: 'Lato', sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      position: relative;
+    }
+
+    .header::before {
+      content: "";
+      display: block;
+      width: 180px;
+      height: 3px;
+      background: linear-gradient(to right, transparent, #c8a97e, transparent);
+      margin: 0 auto 24px;
+    }
+
+    .header::after {
+      content: "";
+      display: block;
+      width: 180px;
+      height: 3px;
+      background: linear-gradient(to right, transparent, #c8a97e, transparent);
+      margin: 24px auto 0;
+    }
+
+    .header h1 {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 700;
+      color: #5a3e28;
+      line-height: 1.1;
+      letter-spacing: 1px;
+    }
+
+    .header .subtitle {
+      font-family: 'Caveat', cursive;
+      font-size: 1.4rem;
+      color: #9b7a5a;
+      margin-top: 10px;
+      letter-spacing: 3px;
+    }
+
+    .header .deco {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      opacity: 0.7;
+    }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 50px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── POLAROID CARD ── */
+    .card {
+      background: #fffdf8;
+      padding: 16px 16px 48px;
+      box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.12),
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+
+    .card:hover {
+      transform: scale(1.02) rotate(0deg) !important;
+      box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.18),
+        0 20px 50px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+    }
+
+    /* Slightly different rotations for each card */
+    .card:nth-child(1) {
+      transform: rotate(-2.1deg);
+    }
+
+    .card:nth-child(2) {
+      transform: rotate(1.5deg);
+    }
+
+    .card:nth-child(3) {
+      transform: rotate(-1.2deg);
+    }
+
+    .card:nth-child(4) {
+      transform: rotate(2.3deg);
+    }
+
+    .card:nth-child(5) {
+      transform: rotate(-0.8deg);
+    }
+
+    .card:nth-child(6) {
+      transform: rotate(1.9deg);
+    }
+
+    .card:nth-child(7) {
+      transform: rotate(-2.5deg);
+    }
+
+    .card:nth-child(8) {
+      transform: rotate(0.7deg);
+    }
+
+    .card:nth-child(9) {
+      transform: rotate(-1.6deg);
+    }
+
+    /* tape strip */
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 28px;
+      background: rgba(255, 235, 160, 0.72);
+      border: 1px solid rgba(200, 180, 100, 0.4);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-radius: 2px;
+    }
+
+    .card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
+      filter: sepia(8%) contrast(105%) brightness(101%);
+    }
+
+    /* portrait photos get a taller display */
+    .card.portrait img {
+      height: 360px;
+    }
+
+    .card .caption {
+      font-family: 'Caveat', cursive;
+      font-size: 1.25rem;
+      color: #5a3e28;
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.3;
+      padding: 0 8px;
+      position: absolute;
+      bottom: 10px;
+      left: 16px;
+      right: 16px;
+    }
+
+    /* ── STORY CARD (wide, long caption) ── */
+    .card.story {
+      grid-column: span 2;
+      padding-bottom: 16px;
+    }
+
+    .card.story .caption {
+      position: static;
+      padding: 14px 12px 8px;
+      font-size: 1.3rem;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    @media (max-width: 700px) {
+      .card.story { grid-column: span 1; }
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      text-align: center;
+      margin: 20px auto 50px;
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: #c8a97e;
+      letter-spacing: 4px;
+      max-width: 400px;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: "— ";
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      margin-top: 70px;
+      font-family: 'Caveat', cursive;
+      color: #b8936a;
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .card:nth-child(n) {
+        transform: rotate(0deg) !important;
+      }
+
+      .card:hover {
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="deco">🌲 🏔️ 🌲</div>
+    <h1>From Athens to Blue Ridge</h1>
+    <p class="subtitle">A reminder of how few pictures we take together. And some memories.</p>
+  </div>
+
+  <div class="grid ">
+
+    <div class="card">
+      <img src="photos/IMG_8926.jpg" alt="Outdoor couple selfie" />
+      <div class="caption">2 best looking people in Comer, GA</div>
+    </div>
+
+    <div class="card portrait">
+      <img src="photos/IMG_8938.jpg" alt="ATV riding" />
+      <div class="caption">Seriously this is badass lol ☀️</div>
+    </div>
+
+    <div class="card portrait">
+      <img src="photos/IMG_9105.jpg" alt="Ski helmet selfie" />
+      <div class="caption">Second best gift ever given. What's the first?</div>
+    </div>
+
+    <div class="card">
+      <img src="photos/IMG_9218.jpg" alt="Mountain view couple selfie" />
+      <div class="caption">Glad we got somethign with all the near-death nosebleeds. Best trip I've ever been on.</div>
+    </div>
+
+    <div class="card">
+      <img src="photos/IMG_9220.jpg" alt="Lodge kiss selfie" />
+      <div class="caption">Head kisses. Coffee. Food. Sleep. I give you those things and it's all good. Why do i make it
+        so hard?</div>
+    </div>
+
+    <div class="card portrait">
+      <img src="photos/IMG_9225.jpg" alt="Lakeside dock" />
+      <div class="caption">Fun walk I want to do more with you!x</div>
+    </div>
+
+    <div class="card">
+      <img src="photos/IMG_9229.jpg" alt="Hiking in pine forest" />
+      <div class="caption">Before</div>
+    </div>
+
+    <div class="card">
+      <img src="photos/IMG_9231.jpg" alt="Trail selfie in the pines" />
+      <div class="caption">After</div>
+    </div>
+
+    <div class="card story">
+      <img src="photos/IMG_9368.jpg" alt="Night out at brewery" />
+      <div class="caption">I actually will think about this little walk a lot. Idk it's like certain ambiances, moments
+        really stick with me and this one will stick almost as close as the candle night. Just didn't have the same
+        drama as the candles.</div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    heart, jimmy;
+  </div>
+
+</body>
+
+</html>
